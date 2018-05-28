@@ -1,5 +1,6 @@
 ## Android 自定义WheelView控件 学习参考
 
+![](./screen.png)
 
 ### 使用
 根工程中的`build.gradle`添加maven仓库

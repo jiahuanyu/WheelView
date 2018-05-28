@@ -1,7 +1,5 @@
 ## Android 自定义WheelView控件 学习参考
-<video width="320" height="240" loop autoplay>
-    <source src="screen.webm" type="video/webm">
-</video>
+
 
 ### 使用
 根工程中的`build.gradle`添加maven仓库
@@ -17,6 +15,19 @@
 工程目录中的`build.gradle`添加实现
 ```
 implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.2'
+```
+
+
+在布局文件中添加
+```xml
+<me.jiahuan.android.wheelview.WheelView
+    android:id="@+id/id_wheel_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cycle="true"
+    app:display_item_count="3"
+    app:selected_text_color="@android:color/holo_red_light"
+    app:unselected_text_color="@android:color/holo_blue_light" />
 ```
 
 

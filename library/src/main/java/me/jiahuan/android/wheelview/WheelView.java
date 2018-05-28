@@ -314,7 +314,7 @@ public class WheelView extends View {
         // 绘制背景
         canvas.drawColor(mComponentBackgroundColor);
         // 绘制辅助线
-        canvas.drawLine(0, mComponentHeight / 2, mComponentWidth, mComponentHeight / 2, mReferenceLinePaint);
+//        canvas.drawLine(0, mComponentHeight / 2, mComponentWidth, mComponentHeight / 2, mReferenceLinePaint);
         // 绘制边框
         canvas.drawRect(mComponentBoundWidth / 2, mComponentBoundWidth / 2, mComponentWidth - mComponentBoundWidth / 2, mComponentHeight - mComponentBoundWidth / 2, mComponentBoundPaint);
         // 绘制两条线

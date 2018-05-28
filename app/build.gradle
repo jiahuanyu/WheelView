@@ -23,7 +23,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
 //    api project(':library')
 
-    implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.2'
+    implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.5'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:design:27.1.1'
     testImplementation 'junit:junit:4.12'

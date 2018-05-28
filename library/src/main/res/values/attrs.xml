@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="WheelView">
+        <!--<attr name="unselected_text_size" format="dimension" />-->
+        <attr name="unselected_text_color" format="color" />
+        <!--<attr name="selected_text_size" format="dimension" />-->
+        <attr name="selected_text_color" format="color" />
+
+        <attr name="text_size" format="dimension" />
+
+        <attr name="horizontal_text_space" format="dimension" />
+        <attr name="vertical_text_space" format="dimension" />
+
+        <attr name="display_item_count" format="integer" />
+
+        <attr name="component_bound_width" format="dimension" />
+        <attr name="component_bound_color" format="color" />
+        <attr name="component_selected_item_up_down_line_width" format="dimension" />
+        <attr name="component_selected_item_up_down_line_color" format="color" />
+        <attr name="component_background_color" format="color" />
+
+        <attr name="cycle" format="boolean" />
+    </declare-styleable>
+</resources>

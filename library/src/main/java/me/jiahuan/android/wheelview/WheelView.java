@@ -101,11 +101,6 @@ public class WheelView extends View {
     // 控件高度
     private int mComponentHeight;
 
-    // 未被选中文字的画笔
-//    private Paint mUnselectedTextPaint;
-    // 被选中文字的画笔
-//    private Paint mSelectedTextPaint;
-
     // 文字画笔
     private Paint mTextPaint;
 
@@ -120,7 +115,7 @@ public class WheelView extends View {
     private Rect mTextBoundRect = new Rect();
 
     // 数据
-    private List<String> mDataList = new ArrayList<>();
+    private List<String> mDataList = null;
 
 
     // y轴纵向滚动
@@ -132,17 +127,17 @@ public class WheelView extends View {
     // 是否循环
     private boolean mIsCycle = false;
 
-
     // Scroller
     private Scroller mScroller;
 
     // 速度追踪器
     private VelocityTracker mVelocityTracker;
 
-    // 宽度的测量MODE
+    // 宽度测量模式
+    private int mWidthMeasureMode;
 
-
-    // 高度的测量MODE
+    // 高度测量模式
+    private int mHeightMeasureMode;
 
 
     public WheelView(Context context) {
@@ -197,17 +192,6 @@ public class WheelView extends View {
 
 
         // 初始化工具
-//        mUnselectedTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        mUnselectedTextPaint.setTextSize(mUnSelectedTextSize);
-//        mUnselectedTextPaint.setColor(mUnSelectedTextColor);
-//        mUnselectedTextPaint.setTextAlign(Paint.Align.CENTER);
-
-
-//        mSelectedTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        mSelectedTextPaint.setTextSize(mSelectedTextSize);
-//        mSelectedTextPaint.setColor(mSelectedTextColor);
-//        mSelectedTextPaint.setTextAlign(Paint.Align.CENTER);
-
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
@@ -265,15 +249,11 @@ public class WheelView extends View {
      * @param stringDataList
      */
     public void setData(List<String> stringDataList) {
-        mTextMaxWidth = mTextMaxHeight = 0;
-        if (stringDataList == null) {
-            throw new NullPointerException();
+        if (stringDataList == null || stringDataList.size() == 0) {
+            return;
         }
+        mTextMaxWidth = mTextMaxHeight = 0;
         mDataList = stringDataList;
-//        Paint measurePaint = mSelectedTextPaint;
-//        if (mSelectedTextSize < mUnSelectedTextSize) {
-//            measurePaint = mUnselectedTextPaint;
-//        }
         // 测量最大文字宽度和高度
         for (String str : stringDataList) {
             measureText(mTextPaint, str, mTextBoundRect);
@@ -285,19 +265,25 @@ public class WheelView extends View {
             }
         }
 
-//        mItemWidth = mTextMaxWidth + (mHorizontalTextSpace << 1);
-        // 计算出一个item的高度
-        mItemHeight = mTextMaxHeight + (mVerticalTextSpace << 1);
+        if (mHeightMeasureMode == MeasureSpec.EXACTLY) {
+            //
+            mItemHeight = mComponentHeight / mDisplayItemCount;
+        } else {
+            // 计算出一个item的高度, item的宽度 = component的宽度
+            mItemHeight = mTextMaxHeight + (mVerticalTextSpace << 1);
+        }
 
         // 需要重新测量绘制，requestLayout?，按需测量
         requestLayout();
         // 刷新onDraw
-        postInvalidate();
+        invalidate();
     }
 
-
+    /**
+     * 通知数据发生变化
+     */
     public void notifyDataChanaged() {
-
+        invalidate();
     }
 
     @Override
@@ -360,6 +346,10 @@ public class WheelView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mDataList == null || mDataList.size() == 0) {
+            return super.onTouchEvent(event);
+        }
+
         mVelocityTracker.addMovement(event);
 
         // 处理滚动事件
@@ -431,13 +421,18 @@ public class WheelView extends View {
         int height = MeasureSpec.getSize(heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        if (widthMode == MeasureSpec.AT_MOST) {
+        Log.d(TAG, "Measure width mode = " + widthMode + ", height mode = " + heightMode);
+
+        if (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED) {
             width = mTextMaxWidth + (mHorizontalTextSpace << 1);
         }
 
-        if (heightMode == MeasureSpec.AT_MOST) {
+        if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
             height = (mTextMaxHeight + (mVerticalTextSpace << 1)) * mDisplayItemCount;
         }
+
+        mWidthMeasureMode = widthMode;
+        mHeightMeasureMode = heightMode;
 
         mComponentWidth = width;
         mComponentHeight = height;

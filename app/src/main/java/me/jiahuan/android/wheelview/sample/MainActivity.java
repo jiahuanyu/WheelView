@@ -12,12 +12,21 @@ import me.jiahuan.android.wheelview.WheelView;
 public class MainActivity extends AppCompatActivity {
 
     private WheelView wheelView;
+    private WheelView wheelView2;
+
+    private List<String> mWheelView2DataList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_main);
         wheelView = findViewById(R.id.id_wheel_view);
+        wheelView2 = findViewById(R.id.id_wheel_view_2);
+        initialize();
+    }
+
+    private void initialize() {
+
     }
 
 
@@ -27,5 +36,10 @@ public class MainActivity extends AppCompatActivity {
             data.add(i + "");
         }
         wheelView.setData(data);
+
+        for (int i = 2000; i <= 2018; i++) {
+            mWheelView2DataList.add(i + "");
+        }
+        wheelView2.setData(mWheelView2DataList);
     }
 }

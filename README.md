@@ -1,6 +1,6 @@
 ## Android 自定义WheelView控件 学习参考
 
-![](./screen.png)
+![](./screen.gif)
 
 ### 使用
 根工程中的`build.gradle`添加maven仓库
@@ -33,7 +33,7 @@ implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.5'
 
 
 
-### 自定义选项
+### 自定义控件属性
 ```xml
 <attr name="unselected_text_color" format="color" /> // 未选中颜色
 <attr name="selected_text_color" format="color" /> // 选中颜色
@@ -51,5 +51,11 @@ implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.5'
 <attr name="component_selected_item_up_down_line_color" format="color" />
 <attr name="component_background_color" format="color" /> // 控件背景色
 
-<attr name="cycle" format="boolean" />
+<attr name="cycle" format="boolean" /> // 是否数据循环
+```
+
+
+### API
+```java
+
 ```

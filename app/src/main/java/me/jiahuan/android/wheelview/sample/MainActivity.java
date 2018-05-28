@@ -26,20 +26,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialize() {
-
+//        onLoadButtonClicked(null);
     }
 
+
+    public void onNotifyDataChangedButtonClicked(View v) {
+        mWheelView2DataList.clear();
+        for (int i = 2018; i <= 3000; i++) {
+            mWheelView2DataList.add(i + "");
+        }
+        wheelView2.notifyDataChanged();
+    }
 
     public void onLoadButtonClicked(View v) {
         List<String> data = new ArrayList<>();
         for (int i = 0; i <= 10; i++) {
             data.add(i + "");
         }
-        wheelView.setData(data);
+        wheelView.bindData(data);
 
         for (int i = 2000; i <= 2018; i++) {
             mWheelView2DataList.add(i + "");
         }
-        wheelView2.setData(mWheelView2DataList);
+        wheelView2.bindData(mWheelView2DataList);
+    }
+
+    public void onSetIndexButtonClicked(View v) {
+        wheelView.setSelectedIndex(2);
+        wheelView2.setSelectedIndex(10);
+    }
+
+    public void onSmoothSetIndexButtonClicked(View v) {
+        wheelView.smoothScrollToSelectedIndex(2);
+        wheelView2.smoothScrollToSelectedIndex(10);
     }
 }

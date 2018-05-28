@@ -17,6 +17,25 @@
             android:onClick="onLoadButtonClicked"
             android:text="LOAD" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onNotifyDataChangedButtonClicked"
+            android:text="NotifyDataChanged" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSetIndexButtonClicked"
+            android:text="SET INDEX" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSmoothSetIndexButtonClicked"
+            android:text="SMOOTH SET INDEX" />
+
     </LinearLayout>
 
 
@@ -43,6 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            app:component_selected_item_up_down_line_color="@android:color/holo_green_light"
+            app:component_selected_item_up_down_line_width="1dp"
             app:cycle="true"
             app:display_item_count="3"
             app:selected_text_color="@android:color/holo_red_light"

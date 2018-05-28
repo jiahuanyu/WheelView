@@ -50,16 +50,11 @@ public class WheelView extends View {
     private static final int DEFAULT_VALUE_VERTICAL_TEXT_SPACE = 40; // dp
 
 
-    // var
-    // 未被选中文字的大小
-//    private int mUnSelectedTextSize;
     // 未被选中文字的颜色
     private int mUnSelectedTextColor;
 
     private int mTextSize;
 
-    // 选中文字的大小
-//    private int mSelectedTextSize;
     // 选中文字的颜色
     private int mSelectedTextColor;
 
@@ -88,11 +83,6 @@ public class WheelView extends View {
     // 纵向间距 2 *
     private int mVerticalTextSpace;
 
-    // 当前选中的item的索引
-//    private int mSelectedItemIndex;
-
-    // Item的宽度
-//    private int mItemWidth;
     // Item的高度
     private int mItemHeight;
 
@@ -215,6 +205,12 @@ public class WheelView extends View {
     }
 
 
+    /**
+     * 根据ratio计算字体的颜色
+     *
+     * @param ratio
+     * @return
+     */
     private int getTextColorWithRatio(float ratio) {
         int startRed = Color.red(mUnSelectedTextColor);
         int endRed = Color.red(mSelectedTextColor);
@@ -243,12 +239,48 @@ public class WheelView extends View {
         paint.getTextBounds(text, 0, text.length(), bounds);
     }
 
+
+    /**
+     * 设置选中的选中项
+     *
+     * @param goalIndex
+     */
+    public void setSelectedIndex(int goalIndex) {
+        if (mDataList == null || mDataList.size() == 0) {
+            return;
+        }
+        if (goalIndex >= mDataList.size() || goalIndex < 0) {
+            throw new RuntimeException("array index out");
+        }
+        if (!mScroller.isFinished()) {
+            mScroller.abortAnimation();
+        }
+
+        mScrollerOffsetY = -goalIndex * mItemHeight;
+        invalidate();
+    }
+
+
+    public void smoothScrollToSelectedIndex(int goalIndex) {
+        if (mDataList == null || mDataList.size() == 0) {
+            return;
+        }
+        if (goalIndex >= mDataList.size() || goalIndex < 0) {
+            throw new RuntimeException("array index out");
+        }
+        if (!mScroller.isFinished()) {
+            mScroller.abortAnimation();
+        }
+        mScroller.startScroll(0, mScrollerOffsetY, 0, -goalIndex * mItemHeight - mScrollerOffsetY);
+        invalidate();
+    }
+
     /**
      * 设置需要显示的数据
      *
      * @param stringDataList
      */
-    public void setData(List<String> stringDataList) {
+    public void bindData(List<String> stringDataList) {
         if (stringDataList == null || stringDataList.size() == 0) {
             return;
         }
@@ -282,7 +314,8 @@ public class WheelView extends View {
     /**
      * 通知数据发生变化
      */
-    public void notifyDataChanaged() {
+    public void notifyDataChanged() {
+        mScrollerOffsetY = 0;
         invalidate();
     }
 
@@ -292,10 +325,6 @@ public class WheelView extends View {
             return;
         }
         Log.d(TAG, "onDraw");
-        if (mScroller.computeScrollOffset()) {
-            mScrollerOffsetY = mScroller.getCurrY();
-            invalidate();
-        }
         // 在滚动的过程中最多有mDisplayItemCount + 1条数据
         // 绘制背景
         canvas.drawColor(mComponentBackgroundColor);
@@ -340,6 +369,10 @@ public class WheelView extends View {
             String data = mDataList.get(realIndex);
             measureText(mTextPaint, data, mTextBoundRect);
             canvas.drawText(data, mComponentWidth / 2, (index + mDisplayItemCount / 2) * mItemHeight + mItemHeight / 2 + mTextBoundRect.height() / 2 + mScrollerOffsetY, mTextPaint);
+        }
+        if (mScroller.computeScrollOffset()) {
+            mScrollerOffsetY = mScroller.getCurrY();
+            invalidate();
         }
     }
 

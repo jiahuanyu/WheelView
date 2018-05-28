@@ -1,5 +1,4 @@
 ## Android 自定义WheelView控件 学习参考
-
 ![](./screen.gif)
 
 ### 使用
@@ -15,7 +14,7 @@
 
 工程目录中的`build.gradle`添加实现
 ```
-implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.5'
+implementation 'me.jiahuan.android.wheelview:wheel-view:0.5.0'
 ```
 
 
@@ -47,8 +46,8 @@ implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.5'
 
 <attr name="component_bound_width" format="dimension" /> // 控件边框宽度
 <attr name="component_bound_color" format="color" />  // 控件边框颜色
-<attr name="component_selected_item_up_down_line_width" format="dimension" />  // 控件中间项上下线条
-<attr name="component_selected_item_up_down_line_color" format="color" />
+<attr name="component_selected_item_up_down_line_width" format="dimension" />  // 控件中间项上下线宽度
+<attr name="component_selected_item_up_down_line_color" format="color" />// 控件中间项上下线颜色
 <attr name="component_background_color" format="color" /> // 控件背景色
 
 <attr name="cycle" format="boolean" /> // 是否数据循环
@@ -57,5 +56,8 @@ implementation 'me.jiahuan.android.wheelview:wheel-view:0.3.5'
 
 ### API
 ```java
-
+WheelView.bindData(List<String>); // 绑定数据源
+WheelView.notifyDataChanged();  // 数据源数据发生变化
+WheelView.setSelectedIndex(int); // 设置选中项
+WheelView.smoothScrollToSelectedIndex(int); // 光滑滑动到选中项
 ```

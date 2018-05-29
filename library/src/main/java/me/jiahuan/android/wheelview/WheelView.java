@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -25,13 +27,14 @@ public class WheelView extends View {
 
     private static final int INVALID_INDEX = -1;
 
+    // 保存数据信息KEY
+    private static final String SAVE_INSTANCE_DATA_KEY = "SAVE_INSTANCE_DATA_KEY";
+
     // 参数默认值
     private static final int DEFAULT_VALUE_DISPLAY_ITEM_COUNT = 5;
-    //    private static final int DEFAULT_VALUE_UNSELECTED_TEXT_SIZE = 14;
     private static final int DEFAULT_VALUE_UNSELECTED_TEXT_COLOR = Color.parseColor("#7C7C7C");
     // 默认字体大小
     private static final int DEFAULT_VALUE_TEXT_SIZE = 16;
-    //    private static final int DEFAULT_VALUE_SELECTED_TEXT_SIZE = 30;
     private static final int DEFAULT_VALUE_SELECTED_TEXT_COLOR = Color.parseColor("#65A6E2");
 
     // 默认控件背景色
@@ -123,12 +126,6 @@ public class WheelView extends View {
     // 速度追踪器
     private VelocityTracker mVelocityTracker;
 
-    // 宽度测量模式
-    private int mWidthMeasureMode;
-
-    // 高度测量模式
-    private int mHeightMeasureMode;
-
 
     public WheelView(Context context) {
         this(context, null);
@@ -152,9 +149,7 @@ public class WheelView extends View {
 
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
 
-//        mUnSelectedTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, typedArray.getDimension(R.styleable.WheelView_unselected_text_size, DEFAULT_VALUE_UNSELECTED_TEXT_SIZE), displayMetrics);
         mUnSelectedTextColor = typedArray.getColor(R.styleable.WheelView_unselected_text_color, DEFAULT_VALUE_UNSELECTED_TEXT_COLOR);
-//        mSelectedTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, typedArray.getDimension(R.styleable.WheelView_selected_text_size, DEFAULT_VALUE_SELECTED_TEXT_SIZE), displayMetrics);
         mSelectedTextColor = typedArray.getColor(R.styleable.WheelView_selected_text_color, DEFAULT_VALUE_SELECTED_TEXT_COLOR);
         mTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, typedArray.getDimension(R.styleable.WheelView_text_size, DEFAULT_VALUE_TEXT_SIZE), displayMetrics);
 
@@ -284,10 +279,21 @@ public class WheelView extends View {
         if (stringDataList == null || stringDataList.size() == 0) {
             return;
         }
-        mTextMaxWidth = mTextMaxHeight = 0;
         mDataList = stringDataList;
+        notifyDataChanged();
+    }
+
+    /**
+     * 通知数据发生变化
+     */
+    public void notifyDataChanged() {
+        if (!mScroller.isFinished()) {
+            mScroller.abortAnimation();
+        }
+        mScrollerOffsetY = 0;
+        mTextMaxWidth = mTextMaxHeight = 0;
         // 测量最大文字宽度和高度
-        for (String str : stringDataList) {
+        for (String str : mDataList) {
             measureText(mTextPaint, str, mTextBoundRect);
             if (mTextBoundRect.width() > mTextMaxWidth) {
                 mTextMaxWidth = mTextBoundRect.width();
@@ -296,26 +302,9 @@ public class WheelView extends View {
                 mTextMaxHeight = mTextBoundRect.height();
             }
         }
-
-        if (mHeightMeasureMode == MeasureSpec.EXACTLY) {
-            //
-            mItemHeight = mComponentHeight / mDisplayItemCount;
-        } else {
-            // 计算出一个item的高度, item的宽度 = component的宽度
-            mItemHeight = mTextMaxHeight + (mVerticalTextSpace << 1);
-        }
-
         // 需要重新测量绘制，requestLayout?，按需测量
         requestLayout();
         // 刷新onDraw
-        invalidate();
-    }
-
-    /**
-     * 通知数据发生变化
-     */
-    public void notifyDataChanged() {
-        mScrollerOffsetY = 0;
         invalidate();
     }
 
@@ -338,7 +327,7 @@ public class WheelView extends View {
 
         // 绘制item
         int drawnSelectedIndex = -mScrollerOffsetY / mItemHeight;
-        Log.d(TAG, "drawnSelectedIndex = " + drawnSelectedIndex);
+//        Log.d(TAG, "drawnSelectedIndex = " + drawnSelectedIndex);
         for (int index = drawnSelectedIndex - mDisplayItemCount / 2 - 1; index <= drawnSelectedIndex + mDisplayItemCount / 2 + 1; index++) {
             int realIndex = index;
             if (mIsCycle) {
@@ -356,7 +345,7 @@ public class WheelView extends View {
             // 颜色计算
             int drawnItemY = (index + mDisplayItemCount / 2) * mItemHeight + mItemHeight / 2 + mScrollerOffsetY;
             int distanceY = Math.abs(getHeight() / 2 - drawnItemY);
-            Log.d(TAG, "distanceY = " + distanceY);
+//            Log.d(TAG, "distanceY = " + distanceY);
             if (distanceY == 0) {
                 mTextPaint.setColor(mSelectedTextColor);
             } else if (distanceY < mItemHeight) {
@@ -461,14 +450,35 @@ public class WheelView extends View {
         }
 
         if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
-            height = (mTextMaxHeight + (mVerticalTextSpace << 1)) * mDisplayItemCount;
+            // 计算出一个item的高度, item的宽度 = component的宽度
+            mItemHeight = mTextMaxHeight + (mVerticalTextSpace << 1);
+            height = mItemHeight * mDisplayItemCount;
+        } else {
+            mItemHeight = height / mDisplayItemCount;
         }
-
-        mWidthMeasureMode = widthMode;
-        mHeightMeasureMode = heightMode;
 
         mComponentWidth = width;
         mComponentHeight = height;
         setMeasuredDimension(width, height);
+    }
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Log.d(TAG, "onSaveInstanceState");
+        Bundle bundle = new Bundle();
+        Parcelable superData = super.onSaveInstanceState();
+        bundle.putParcelable("super_data", superData);
+        bundle.putStringArrayList(SAVE_INSTANCE_DATA_KEY, (ArrayList<String>) mDataList);
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Log.d(TAG, "onRestoreInstanceState");
+        Bundle bundle = (Bundle) state;
+        Parcelable superData = bundle.getParcelable("super_data");
+        bindData(bundle.getStringArrayList(SAVE_INSTANCE_DATA_KEY));
+        super.onRestoreInstanceState(superData);
     }
 }

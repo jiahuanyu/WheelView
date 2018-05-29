@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         }
         wheelView.bindData(data);
 
+        mWheelView2DataList.clear();
         for (int i = 2000; i <= 2018; i++) {
             mWheelView2DataList.add(i + "");
         }

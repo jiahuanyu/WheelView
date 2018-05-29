@@ -14,7 +14,7 @@
 
 工程目录中的`build.gradle`添加实现
 ```
-implementation 'me.jiahuan.android.wheelview:wheel-view:0.5.0'
+implementation 'me.jiahuan.android.wheelview:wheel-view:0.5.2'
 ```
 
 
